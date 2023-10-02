@@ -1,0 +1,11 @@
+---
+- name: Check rsyslog is installed
+  package:
+    name: rsyslog
+    state: present
+
+- name: Generate rsyslog config
+  template:
+    src: etc/rsyslog.d/haproxy.conf.j2
+    dest: "{{ haproxy_rsyslog_config_path }}"
+  notify: restart_rsyslog

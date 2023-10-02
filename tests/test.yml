@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  roles:
+    - f9n.haproxy

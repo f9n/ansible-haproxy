@@ -1,0 +1,6 @@
+---
+- include: install.yml
+- include: rsyslog.yml
+- include: logrotate.yml
+- include: config.yml
+- include: service.yml

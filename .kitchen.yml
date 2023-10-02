@@ -1,0 +1,28 @@
+---
+driver:
+  name: vagrant
+  network:
+    - ["forwarded_port", { guest: 80, host: 8080 }]
+    - ["private_network", { ip: "192.168.66.66" }]
+
+provisioner:
+  name: ansible_playbook
+  hosts: localhost
+  ansible_connection: local
+  ansible_verbose: true
+  ansible_version: latest
+  require_ansible_repo: true
+  require_chef_for_busser: false
+  require_ruby_for_busser: false
+
+platforms:
+  - name: centos-7
+
+verifier:
+  name: inspec
+
+suites:
+  - name: default
+    provisioner:
+      name: ansible_playbook
+      playbook: tests/test.yml

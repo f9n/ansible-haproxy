@@ -1,0 +1,18 @@
+---
+- name: Create haproxy.service.d directory
+  file:
+    path: "{{ haproxy_service_override_dir }}"
+    state: directory
+
+- name: Override LimitNOFILE and LimitNPROC
+  template:
+    src: haproxy.service.limits.conf.j2
+    dest: "{{ haproxy_service_override_dir }}/10-limits.conf"
+  notify:
+    - restart_haproxy_and_daemon_reload
+
+- name: Start and Enable HAProxy
+  service:
+    name: haproxy
+    state: started
+    enabled: true

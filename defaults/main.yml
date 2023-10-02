@@ -1,0 +1,72 @@
+---
+# defaults file for f9n.haproxy
+
+# Haproxy installation
+haproxy_installation_method: original # without external rpm or ppa
+# haproxy_installation_method: external
+
+haproxy_debian_version: 2.1
+haproxy_debian_ppa: ppa:vbernat/haproxy
+
+# Wir sind Kral
+haproxy_rpm_version: 2.0.7
+haproxy_rpm_uri: "https://github.com/DBezemer/rpm-haproxy/releases/download/{{ haproxy_rpm_version }}/haproxy-{{ haproxy_rpm_version }}-1.el7.x86_64.rpm"
+
+# The logrotate configs
+haproxy_logrotate_config_path: /etc/logrotate.d/haproxy
+haproxy_logrotate_size: 500M
+haproxy_logrotate_backlog_size: 10
+
+# The syslog configs
+haproxy_syslog_facility: local0
+haproxy_syslog_level: "*"
+
+haproxy_log_file: /var/log/haproxy.log
+haproxy_rsyslog_config_path: /etc/rsyslog.d/01-haproxy.conf
+
+# Haproxy configs
+haproxy_user: haproxy
+haproxy_user_home: /var/lib/haproxy
+haproxy_group: haproxy
+
+haproxy_limit_nofile: infinity
+haproxy_limit_nproc: infinity
+haproxy_service_override_dir: /usr/lib/systemd/system/haproxy.service.d
+
+haproxy_global: |
+  global
+    log 127.0.0.1 local0 debug
+    chroot /var/lib/haproxy
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+    maxconn 500000
+    nbproc {{ ansible_processor_vcpus }}
+  {% for n in range(ansible_processor_vcpus) %}
+    cpu-map {{ n + 1 }} {{ n }}
+  {% endfor %}
+    stats bind-process {{ ansible_processor_vcpus }}
+
+haproxy_defaults: |
+  defaults
+    maxconn 500000
+    log global
+    option log-health-checks
+    option httplog
+    option dontlognull
+    timeout connect 5s
+    timeout server 100s
+    timeout client 100s
+
+haproxy_stats: |
+  listen stats
+    bind *:7000
+    mode http
+    stats enable
+    stats uri /haproxy
+    stats refresh 5s
+
+haproxy_frontends: ""
+haproxy_backends: ""
+haproxy_other_configs: ""

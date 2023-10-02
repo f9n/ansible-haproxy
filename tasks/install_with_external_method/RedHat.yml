@@ -1,0 +1,11 @@
+---
+- name: Download rpm package
+  get_url:
+    url: "{{ haproxy_rpm_uri }}"
+    dest: "/tmp/haproxy-{{ haproxy_rpm_version }}.rpm"
+    mode: "0440"
+
+- name: Install haproxy rpm package from a local file
+  yum:
+    name: "/tmp/haproxy-{{ haproxy_rpm_version }}.rpm"
+    state: present

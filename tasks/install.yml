@@ -1,0 +1,39 @@
+---
+- name: Check values of haproxy_installation_method
+  assert:
+    msg: The haproxy installation method is support original or external.
+    that:
+      - haproxy_installation_method == 'original' or haproxy_installation_method == 'external'
+
+- name: Ensure HAProxy is installed with original method
+  package:
+    name: haproxy
+    state: present
+  when: haproxy_installation_method == 'original'
+
+- name: Ensure HAProxy is enabled (so init script will start it on Debian).
+  lineinfile:
+    dest: /etc/default/haproxy
+    regexp: "^ENABLED.+$"
+    line: "ENABLED=1"
+    state: present
+  when:
+    - haproxy_installation_method == 'original'
+    - ansible_os_family == 'Debian'
+
+- name: Install HAProxy with external method
+  include: "install_with_external_method/{{ansible_os_family}}.yml"
+  when: haproxy_installation_method == 'external'
+
+- name: Create group
+  group:
+    name: "{{ haproxy_group }}"
+    system: yes
+    state: present
+
+- name: Create user
+  user:
+    name: "{{ haproxy_user }}"
+    system: yes
+    home: "{{ haproxy_user_home }}"
+    state: present

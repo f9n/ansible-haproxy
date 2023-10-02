@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+$ModLoad imudp
+$UDPServerRun 514
+
+{{ haproxy_syslog_facility }}.{{ haproxy_syslog_level }} {{ haproxy_log_file }}

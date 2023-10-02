@@ -1,0 +1,5 @@
+---
+- name: Generate haproxy logrotation
+  template:
+    src: etc/logrotate.d/haproxy.j2
+    dest: "{{ haproxy_logrotate_config_path }}"

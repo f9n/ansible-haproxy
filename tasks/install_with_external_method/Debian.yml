@@ -1,0 +1,10 @@
+---
+- name: add repository from PPA
+  apt_repository:
+    repo: "{{ debian_haproxy_ppa }}-{{ debian_haproxy_version }}"
+    update_cache: yes
+
+- name: install haproxy apt package from a local file
+  apt:
+    name: haproxy
+    state: present
